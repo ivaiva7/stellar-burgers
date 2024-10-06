@@ -1,12 +1,18 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
 import { useSelector } from '../../services/store';
-import { getUser, setUser } from '../../services/user/UserSlice';
+import {
+  getUser,
+  setUser,
+  selectIsAuthenticated
+} from '../../services/user/UserSlice';
 import { updateUser } from '../../services/user/UserActions';
 import { useDispatch } from '../../services/store';
+import { Navigate } from 'react-router-dom';
 
 export const Profile: FC = () => {
   const user = useSelector(getUser) || { name: '', email: '' };
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const dispatch = useDispatch();
 
   const [formValue, setFormValue] = useState({
@@ -58,6 +64,10 @@ export const Profile: FC = () => {
       [e.target.name]: e.target.value
     }));
   };
+
+  if (!isAuthenticated) {
+    return <Navigate to='/login' />;
+  }
 
   return (
     <ProfileUI

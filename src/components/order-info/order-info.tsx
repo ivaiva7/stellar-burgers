@@ -71,6 +71,5 @@ export const OrderInfo: FC<OrderInfoProps> = ({ orderNumber }) => {
   if (!orderInfo) {
     return <Preloader />;
   }
-
   return <OrderInfoUI orderInfo={orderInfo} />;
 };

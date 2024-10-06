@@ -50,7 +50,6 @@ export const OrderCard: FC<OrderCardProps> = memo(({ order }) => {
   }, [order, ingredients]);
 
   if (!orderInfo) return null;
-
   return (
     <OrderCardUI
       orderInfo={orderInfo}

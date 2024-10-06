@@ -22,14 +22,8 @@ const initialState: OrdersState = {
 export const fetchOrders = createAsyncThunk<TOrder[], void>(
   'orders/fetchOrders',
   async (_, { rejectWithValue }) => {
-    try {
-      const orders = await getOrdersApi();
-      return orders;
-    } catch (error) {
-      return rejectWithValue(
-        (error as Error).message || 'Ошибка при получении заказов'
-      );
-    }
+    const orders = await getOrdersApi();
+    return orders;
   }
 );
 

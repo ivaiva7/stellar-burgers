@@ -20,11 +20,11 @@ type TUserState = {
 };
 
 const initialState: TUserState = {
-  user: null,
+  user: JSON.parse(localStorage.getItem('user') || 'null'),
   isAuthChecked: false,
   isLoading: false,
   error: null,
-  isAuthenticated: false
+  isAuthenticated: !!localStorage.getItem('token')
 };
 
 export const userSlice = createSlice({
@@ -33,6 +33,11 @@ export const userSlice = createSlice({
   reducers: {
     setUser(state, action: PayloadAction<TUser | null>) {
       state.user = action.payload;
+      if (action.payload) {
+        localStorage.setItem('user', JSON.stringify(action.payload));
+      } else {
+        localStorage.removeItem('user');
+      }
     },
     setIsAuthChecked: (state, action: PayloadAction<boolean>) => {
       state.isAuthChecked = action.payload;
@@ -44,7 +49,6 @@ export const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-
       .addCase(register.pending, (state) => {
         state.isLoading = true;
         state.error = null;
@@ -66,7 +70,7 @@ export const userSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthChecked = true;
-        state.isAuthenticated = true; // Установите true
+        state.isAuthenticated = true;
         state.isLoading = false;
       })
       .addCase(login.rejected, (state, action) => {
@@ -107,18 +111,27 @@ export const userSlice = createSlice({
         state.user = action.payload;
       })
 
-      .addCase(checkUserAuth.fulfilled, (state) => {
+      .addCase(checkUserAuth.fulfilled, (state, action) => {
         state.isAuthChecked = true;
+        if (action.payload) {
+          state.user = action.payload;
+          state.isAuthenticated = true;
+        } else {
+          state.user = null;
+          state.isAuthenticated = false;
+          localStorage.removeItem('user');
+        }
       })
 
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.user = action.payload; // обновите пользователя в состоянии
+        state.user = action.payload;
       });
   }
 });
 
 export const selectIsAuthenticated = (state: RootState) =>
   state.user.isAuthenticated;
+
 export const { setUser, setIsAuthChecked } = userSlice.actions;
 export const { getIsAuthChecked, getUser } = userSlice.selectors;
 

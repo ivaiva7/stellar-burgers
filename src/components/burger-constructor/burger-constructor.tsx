@@ -1,4 +1,4 @@
-import { FC, useMemo, useState, useRef } from 'react';
+import React, { FC, useMemo, useState, useRef } from 'react';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorUI } from '@ui';
 import { useSelector, useDispatch } from '../../services/store';
@@ -12,6 +12,7 @@ import { RootState } from '../../services/store';
 import { OrderDetailsUI } from '@ui';
 import { useNavigate } from 'react-router-dom';
 import { useClose } from '../../useClose';
+import { Modal } from '../modal';
 
 export const BurgerConstructor: FC = () => {
   const constructorItems = useSelector(
@@ -26,8 +27,6 @@ export const BurgerConstructor: FC = () => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isLoading, setIsLoading] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
   const dispatch = useDispatch();
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -82,11 +81,14 @@ export const BurgerConstructor: FC = () => {
         onOrderClick={onOrderClick}
         closeOrderModal={closeOrderModal}
       />
-      {orderModalData?.number && (
-        <OrderDetailsUI
-          orderNumber={orderModalData.number}
-          onClose={closeOrderModal}
-        />
+
+      {orderModalData && (
+        <Modal title={''} onClose={closeOrderModal}>
+          <OrderDetailsUI
+            orderNumber={orderModalData.number}
+            onClose={closeOrderModal}
+          />
+        </Modal>
       )}
     </>
   );

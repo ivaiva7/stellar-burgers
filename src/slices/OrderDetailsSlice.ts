@@ -21,30 +21,26 @@ export const fetchOrderByNumber = createAsyncThunk<
   { state: RootState }
 >(
   'orders/fetchOrderByNumber',
-  async (orderNumber, { rejectWithValue, getState }) => {
-    try {
-      const response: TOrderResponse = await getOrderByNumberApi(orderNumber);
+  async (orderNumber, { getState, rejectWithValue }) => {
+    const response: TOrderResponse = await getOrderByNumberApi(orderNumber);
 
-      if (response.orders && response.orders.length > 0) {
-        const order = response.orders[0];
+    if (response.orders && response.orders.length > 0) {
+      const order = response.orders[0];
 
-        const ingredientsState = getState().ingredients.ingredients;
+      const ingredientsState = getState().ingredients.ingredients;
 
-        const ingredients = order.ingredients
-          .map((id) =>
-            ingredientsState.find((ingredient) => ingredient._id === id)
-          )
-          .filter(Boolean) as TIngredient[];
+      const ingredients = order.ingredients
+        .map((id) =>
+          ingredientsState.find((ingredient) => ingredient._id === id)
+        )
+        .filter(Boolean) as TIngredient[];
 
-        return {
-          order,
-          ingredients
-        };
-      }
-      throw new Error('Заказ не найден');
-    } catch (error) {
-      return rejectWithValue((error as Error).message);
+      return {
+        order,
+        ingredients
+      };
     }
+    return rejectWithValue('Заказ не найден');
   }
 );
 

@@ -22,13 +22,9 @@ const initialState: ConstructorState = {
 
 export const orderBurger = createAsyncThunk(
   'constructor/orderBurger',
-  async (ingredients: string[], { rejectWithValue }) => {
-    try {
-      const response = await orderBurgerApi(ingredients);
-      return response.order;
-    } catch (error) {
-      return rejectWithValue(error);
-    }
+  async (ingredients: string[]) => {
+    const response = await orderBurgerApi(ingredients);
+    return response.order;
   }
 );
 

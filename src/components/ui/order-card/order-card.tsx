@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   CurrencyIcon,
   FormattedDate
@@ -16,10 +16,12 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
   ({ orderInfo, maxIngredients, locationState }) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const location = useLocation();
 
-    const handleClick = () => {
+    const handleClick = (event: React.MouseEvent) => {
+      event.preventDefault(); // Отменяем стандартное поведение ссылки
       dispatch(fetchOrderByNumber(orderInfo.number));
-      navigate(`/feed/${orderInfo.number}`);
+      navigate(`/feed/${orderInfo.number}`, { state: { background: true } }); // Передаем состояние для отображения модалки
     };
 
     return (

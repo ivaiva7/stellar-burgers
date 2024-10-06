@@ -11,15 +11,23 @@ import { OrderStatus } from '@components';
 
 export const OrderInfoUI: FC<OrderInfoUIProps> = memo(({ orderInfo }) => {
   const { name, status, ingredientsInfo, date, total } = orderInfo;
+
+  const modifiedIngredientsInfo = Object.values(ingredientsInfo).map((item) => {
+    if (item.type === 'bun') {
+      return { ...item, count: 2 };
+    }
+    return item;
+  });
+
   return (
     <div className={styles.wrap}>
-      <h3 className={`text text_type_main-medium  pb-3 pt-10 ${styles.header}`}>
+      <h3 className={`text text_type_main-medium pb-3 pt-10 ${styles.header}`}>
         {name}
       </h3>
       <OrderStatus status={status} />
-      <p className={`text text_type_main-medium pt-15 pb=6`}>Состав:</p>
+      <p className={`text text_type_main-medium pt-15 pb-6`}>Состав:</p>
       <ul className={`${styles.list} mb-8`}>
-        {Object.values(ingredientsInfo).map((item, index) => (
+        {modifiedIngredientsInfo.map((item, index) => (
           <li className={`pb-4 pr-6 ${styles.item}`} key={index}>
             <div className={styles.img_wrap}>
               <div className={styles.border}>

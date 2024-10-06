@@ -4,7 +4,6 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { getIsAuthChecked, getUser } from '../services/user/UserSlice';
 import { checkUserAuth } from '../services/user/UserActions';
 import { AppDispatch } from '../services/store';
-import { Preloader } from '@ui';
 
 type TProtectedRouteProps = {
   onlyUnAuth?: boolean;
@@ -25,10 +24,6 @@ const ProtectedRoute = ({
       dispatch(checkUserAuth());
     }
   }, [dispatch, isAuthChecked]);
-
-  if (!isAuthChecked) {
-    return <Preloader />;
-  }
 
   if (!onlyUnAuth && !user) {
     return <Navigate to='/login' state={{ from: location }} />;

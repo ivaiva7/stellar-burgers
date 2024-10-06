@@ -16,18 +16,13 @@ const initialState: OrdersState = {
   error: null
 };
 
-export const fetchOrders = createAsyncThunk<
-  TOrdersData,
-  void,
-  { rejectValue: string }
->('orders/fetchOrders', async (_, { rejectWithValue }) => {
-  try {
+export const fetchOrders = createAsyncThunk<TOrdersData, void>(
+  'orders/fetchOrders',
+  async () => {
     const response = await getFeedsApi();
     return response;
-  } catch (error) {
-    return rejectWithValue('Не удалось загрузить заказы');
   }
-});
+);
 
 const feedSlice = createSlice({
   name: 'feed',

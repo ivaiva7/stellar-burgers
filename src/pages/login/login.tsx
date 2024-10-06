@@ -7,6 +7,7 @@ import { login } from '../../services/user/UserActions';
 export const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorText, setErrorText] = useState('');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -17,12 +18,14 @@ export const Login: FC = () => {
 
     if (login.fulfilled.match(resultAction)) {
       navigate('/profile');
+    } else {
+      setErrorText('Неправильный логин или пароль');
     }
   };
 
   return (
     <LoginUI
-      errorText=''
+      errorText={errorText}
       email={email}
       setEmail={setEmail}
       password={password}

@@ -9,6 +9,9 @@ import { BurgerConstructorUIProps } from './type';
 import { TConstructorIngredient } from '@utils-types';
 import { BurgerConstructorElement, Modal } from '@components';
 import { Preloader, OrderDetailsUI } from '@ui';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from '../../../services/store';
+import { selectIsAuthenticated } from '../../../services/user/UserSlice';
 
 export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
   constructorItems,
@@ -17,94 +20,107 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
   orderModalData,
   onOrderClick,
   closeOrderModal
-}) => (
-  <section className={styles.burger_constructor}>
-    {constructorItems.bun && constructorItems.bun.name ? (
-      <div className={`${styles.element} mb-4 mr-4`}>
-        <ConstructorElement
-          type='top'
-          isLocked
-          text={`${constructorItems.bun.name} (верх)`}
-          price={constructorItems.bun.price}
-          thumbnail={constructorItems.bun.image}
-        />
-      </div>
-    ) : (
-      <div
-        className={`${styles.noBuns} ${styles.noBunsTop} ml-8 mb-4 mr-5 text text_type_main-default`}
-      >
-        Выберите булку
-      </div>
-    )}
+}) => {
+  const navigate = useNavigate();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
-    <ul className={styles.elements}>
-      {constructorItems.fillings && constructorItems.fillings.length > 0 ? (
-        constructorItems.fillings.map(
-          (item: TConstructorIngredient, index: number) => (
-            <BurgerConstructorElement
-              ingredient={item}
-              index={index}
-              totalItems={constructorItems.fillings.length}
-              key={item.id}
-            />
-          )
-        )
+  const handleOrderClick = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    } else {
+      onOrderClick();
+    }
+  };
+
+  return (
+    <section className={styles.burger_constructor}>
+      {constructorItems.bun && constructorItems.bun.name ? (
+        <div className={`${styles.element} mb-4 mr-4`}>
+          <ConstructorElement
+            type='top'
+            isLocked
+            text={`${constructorItems.bun.name} (верх)`}
+            price={constructorItems.bun.price}
+            thumbnail={constructorItems.bun.image}
+          />
+        </div>
       ) : (
         <div
-          className={`${styles.noBuns} ml-8 mb-4 mr-5 text text_type_main-default`}
+          className={`${styles.noBuns} ${styles.noBunsTop} ml-8 mb-4 mr-5 text text_type_main-default`}
         >
-          Выберите начинку
+          Выберите булку
         </div>
       )}
-    </ul>
 
-    {constructorItems.bun && constructorItems.bun.name ? (
-      <div className={`${styles.element} mt-4 mr-4`}>
-        <ConstructorElement
-          type='bottom'
-          isLocked
-          text={`${constructorItems.bun.name} (низ)`}
-          price={constructorItems.bun.price}
-          thumbnail={constructorItems.bun.image}
+      <ul className={styles.elements}>
+        {constructorItems.fillings && constructorItems.fillings.length > 0 ? (
+          constructorItems.fillings.map(
+            (item: TConstructorIngredient, index: number) => (
+              <BurgerConstructorElement
+                ingredient={item}
+                index={index}
+                totalItems={constructorItems.fillings.length}
+                key={item.id}
+              />
+            )
+          )
+        ) : (
+          <div
+            className={`${styles.noBuns} ml-8 mb-4 mr-5 text text_type_main-default`}
+          >
+            Выберите начинку
+          </div>
+        )}
+      </ul>
+
+      {constructorItems.bun && constructorItems.bun.name ? (
+        <div className={`${styles.element} mt-4 mr-4`}>
+          <ConstructorElement
+            type='bottom'
+            isLocked
+            text={`${constructorItems.bun.name} (низ)`}
+            price={constructorItems.bun.price}
+            thumbnail={constructorItems.bun.image}
+          />
+        </div>
+      ) : (
+        <div
+          className={`${styles.noBuns} ${styles.noBunsBottom} ml-8 mb-4 mr-5 text text_type_main-default`}
+        >
+          Выберите булку
+        </div>
+      )}
+      <div className={`${styles.total} mt-10 mr-4`}>
+        <div className={`${styles.cost} mr-10`}>
+          <p className={`text ${styles.text} mr-2`}>{price}</p>
+          <CurrencyIcon type='primary' />
+        </div>
+        <Button
+          htmlType='button'
+          type='primary'
+          size='large'
+          children='Оформить заказ'
+          onClick={handleOrderClick}
         />
       </div>
-    ) : (
-      <div
-        className={`${styles.noBuns} ${styles.noBunsBottom} ml-8 mb-4 mr-5 text text_type_main-default`}
-      >
-        Выберите булку
-      </div>
-    )}
-    <div className={`${styles.total} mt-10 mr-4`}>
-      <div className={`${styles.cost} mr-10`}>
-        <p className={`text ${styles.text} mr-2`}>{price}</p>
-        <CurrencyIcon type='primary' />
-      </div>
-      <Button
-        htmlType='button'
-        type='primary'
-        size='large'
-        children='Оформить заказ'
-        onClick={onOrderClick}
-      />
-    </div>
 
-    {orderRequest && (
-      <Modal onClose={closeOrderModal} title={'Оформляем заказ...'}>
-        <Preloader />
-      </Modal>
-    )}
+      {orderRequest && (
+        <Modal onClose={closeOrderModal} title={'Оформляем заказ...'}>
+          <Preloader />
+        </Modal>
+      )}
 
-    {orderModalData && (
-      <Modal
-        onClose={closeOrderModal}
-        title={orderRequest ? 'Оформляем заказ...' : ''}
-      >
-        <OrderDetailsUI
-          orderNumber={orderModalData.number}
-          onClose={closeOrderModal} // Передаем функцию закрытия
-        />
-      </Modal>
-    )}
-  </section>
-);
+      {orderModalData && (
+        <Modal
+          onClose={closeOrderModal}
+          title={orderRequest ? 'Оформляем заказ...' : ''}
+        >
+          <OrderDetailsUI
+            orderNumber={orderModalData.number}
+            onClose={closeOrderModal}
+          />
+        </Modal>
+      )}
+    </section>
+  );
+};
