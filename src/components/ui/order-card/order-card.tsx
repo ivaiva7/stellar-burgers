@@ -19,9 +19,9 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
     const location = useLocation();
 
     const handleClick = (event: React.MouseEvent) => {
-      event.preventDefault(); // Отменяем стандартное поведение ссылки
+      event.preventDefault();
       dispatch(fetchOrderByNumber(orderInfo.number));
-      navigate(`/feed/${orderInfo.number}`, { state: { background: true } }); // Передаем состояние для отображения модалки
+      navigate(`/feed/${orderInfo.number}`, { state: { background: true } });
     };
 
     return (
