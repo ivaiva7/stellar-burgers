@@ -4,13 +4,13 @@ export type OrderInfoUIProps = {
   orderInfo: TOrderInfo;
 };
 
-type TOrderInfo = {
+export type TOrderInfo = {
   ingredientsInfo: {
     [key: string]: TIngredient & { count: number };
   };
   date: Date;
   total: number;
-  _id: string;
+  _id: string | undefined;
   status: string;
   name: string;
   createdAt: string;
