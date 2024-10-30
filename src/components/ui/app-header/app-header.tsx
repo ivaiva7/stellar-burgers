@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import styles from './app-header.module.css';
 import { TAppHeaderUIProps } from './type';
 import {
@@ -27,48 +27,70 @@ export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
       <nav className={`${styles.menu} p-4`}>
         <div className={styles.menu_part_left}>
           <>
-            <BurgerIcon type={'primary'} />
-            <p className='text text_type_main-default ml-2 mr-10'>
-              <NavLink
-                className={({ isActive }) =>
-                  isActive ? styles.link_active : styles.link
-                }
-                to='/'
-              >
+            <NavLink
+              className={
+                useLocation().pathname === '/'
+                  ? styles.link_active
+                  : styles.link
+              }
+              to='/'
+            >
+              <BurgerIcon
+                type={useLocation().pathname === '/' ? 'primary' : 'secondary'}
+              />
+              <p className='text text_type_main-default ml-2 mr-10'>
                 Конструктор
-              </NavLink>
-            </p>
+              </p>
+            </NavLink>
           </>
           <>
-            <ListIcon type={'primary'} />
-            <p className='text text_type_main-default ml-2'>
-              <NavLink
-                className={({ isActive }) =>
-                  isActive ? styles.link_active : styles.link
+            <NavLink
+              className={
+                useLocation().pathname === '/feed'
+                  ? styles.link_active
+                  : styles.link
+              }
+              to='/feed'
+            >
+              <ListIcon
+                type={
+                  useLocation().pathname === '/feed' ? 'primary' : 'secondary'
                 }
-                to='/feed'
-              >
-                Лента заказов
-              </NavLink>
-            </p>
+              />
+              <p className='text text_type_main-default ml-2'>Лента заказов</p>
+            </NavLink>
           </>
         </div>
         <div className={styles.logo}>
-          <Logo className='' />
+          <NavLink
+            className={
+              useLocation().pathname === '/' ? styles.link_active : styles.link
+            }
+            to='/'
+          >
+            {' '}
+            <Logo className='' />
+          </NavLink>
         </div>
         <div className={styles.link_position_last}>
-          <ProfileIcon type={'primary'} />
-          <p className='text text_type_main-default ml-2'>
-            <NavLink
-              className={({ isActive }) =>
-                isActive ? styles.link_active : styles.link
+          <NavLink
+            className={
+              useLocation().pathname === '/profile'
+                ? styles.link_active
+                : styles.link
+            }
+            to='/profile'
+            onClick={handleProfileClick}
+          >
+            <ProfileIcon
+              type={
+                useLocation().pathname === '/profile' ? 'primary' : 'secondary'
               }
-              to='/profile'
-              onClick={handleProfileClick}
-            >
+            />
+            <p className='text text_type_main-default ml-2'>
               {userName || 'Личный кабинет'}
-            </NavLink>
-          </p>
+            </p>
+          </NavLink>
         </div>
       </nav>
     </header>

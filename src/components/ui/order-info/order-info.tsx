@@ -10,6 +10,7 @@ import { OrderInfoUIProps } from './type';
 import { OrderStatus } from '@components';
 
 export const OrderInfoUI: FC<OrderInfoUIProps> = memo(({ orderInfo }) => {
+  console.log('OrderInfo:', orderInfo);
   const { name, status, ingredientsInfo, date, total } = orderInfo;
 
   const modifiedIngredientsInfo = Object.values(ingredientsInfo).map((item) => {

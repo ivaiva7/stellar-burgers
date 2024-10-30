@@ -9,19 +9,22 @@ import styles from './order-card.module.css';
 
 import { OrderCardUIProps } from './type';
 import { OrderStatus } from '@components';
-import { useDispatch } from '../../../services/store';
-import { fetchOrderByNumber } from '../../../slices/OrderDetailsSlice';
 
 export const OrderCardUI: FC<OrderCardUIProps> = memo(
   ({ orderInfo, maxIngredients, locationState }) => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const location = useLocation();
 
     const handleClick = (event: React.MouseEvent) => {
       event.preventDefault();
-      dispatch(fetchOrderByNumber(orderInfo.number));
-      navigate(`/feed/${orderInfo.number}`, { state: { background: true } });
+
+      if (locationState && locationState.background) {
+        // Если находимся в состоянии фонового модального окна
+        navigate(`/feed/${orderInfo.number}`, { state: { background: true } });
+      } else {
+        // Открываем на отдельной странице
+        navigate(`/feed/${orderInfo.number}`, { state: { background: false } });
+      }
     };
 
     return (

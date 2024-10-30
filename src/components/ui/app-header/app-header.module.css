@@ -21,7 +21,8 @@
 }
 
 .link_active {
-  color: var(--text-primary-color);
+    display: flex;
+    color: var(--text-primary-color);
     text-decoration: none;
 }
 

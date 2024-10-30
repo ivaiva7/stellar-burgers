@@ -21,6 +21,8 @@ export const register = createAsyncThunk<TUser, TRegisterData>(
   }
 );
 
+export const setUser = createAction<TUser | null, 'SET_USER'>('SET_USER');
+
 export const login = createAsyncThunk<TUser, TLoginData>(
   'user/login',
   async (data) => {
@@ -29,8 +31,8 @@ export const login = createAsyncThunk<TUser, TLoginData>(
 
     setCookie('accessToken', accessToken, { expires: 3600 });
     setCookie('refreshToken', refreshToken, { expires: 3600 });
-    setCookie('user', JSON.stringify(user), { expires: 3600 });
-
+    localStorage.setItem('refreshToken', refreshToken);
+    localStorage.setItem('user', JSON.stringify(user));
     return user;
   }
 );
@@ -39,7 +41,9 @@ export const logout = createAsyncThunk('user/logout', async () => {
   await logoutApi();
   deleteCookie('accessToken');
   deleteCookie('refreshToken');
-  deleteCookie('user');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
+  location.reload();
 });
 
 export const forgotPassword = createAsyncThunk<void, { email: string }>(
@@ -56,24 +60,20 @@ export const resetPassword = createAsyncThunk<
   await resetPasswordApi(data);
 });
 
-export const setUser = createAction<TUser | null, 'SET_USER'>('SET_USER');
-
 export const getUser = async (dispatch: any): Promise<TUser | null> => {
-  const accessToken = getCookie('accessToken');
+  const refreshToken = getCookie('refreshToken');
 
-  if (!accessToken) {
-    dispatch(logout());
+  if (!refreshToken) {
     return null;
   }
 
-  const headers: HeadersInit = { authorization: accessToken };
-
   const dataUser: TUser | null = await fetchWithRefresh('auth/user', {
-    headers
+    headers: { authorization: `Bearer ${refreshToken}` }
   });
 
   if (!dataUser) {
     dispatch(logout());
+    return null;
   }
 
   return dataUser;

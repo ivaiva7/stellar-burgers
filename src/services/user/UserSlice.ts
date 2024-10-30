@@ -5,8 +5,6 @@ import {
   login,
   logout,
   checkUserAuth,
-  forgotPassword,
-  resetPassword,
   updateUser
 } from './UserActions';
 import { RootState } from '../store';
@@ -24,7 +22,7 @@ const initialState: TUserState = {
   isAuthChecked: false,
   isLoading: false,
   error: null,
-  isAuthenticated: !!localStorage.getItem('token')
+  isAuthenticated: !!localStorage.getItem('refreshToken')
 };
 
 export const userSlice = createSlice({
@@ -43,29 +41,13 @@ export const userSlice = createSlice({
       state.isAuthChecked = action.payload;
     }
   },
-  selectors: {
-    getIsAuthChecked: (state) => state.isAuthChecked,
-    getUser: (state) => state.user
-  },
   extraReducers: (builder) => {
     builder
-      .addCase(register.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
       .addCase(register.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthChecked = true;
+        state.isAuthenticated = true;
         state.isLoading = false;
-      })
-      .addCase(register.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      })
-
-      .addCase(login.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload;
@@ -73,44 +55,10 @@ export const userSlice = createSlice({
         state.isAuthenticated = true;
         state.isLoading = false;
       })
-      .addCase(login.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      })
-
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
       })
-
-      .addCase(forgotPassword.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(forgotPassword.fulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(forgotPassword.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      })
-
-      .addCase(resetPassword.pending, (state) => {
-        state.isLoading = true;
-        state.error = null;
-      })
-      .addCase(resetPassword.fulfilled, (state) => {
-        state.isLoading = false;
-      })
-      .addCase(resetPassword.rejected, (state, action) => {
-        state.isLoading = false;
-        state.error = action.payload as string;
-      })
-
-      .addCase(setUser, (state, action) => {
-        state.user = action.payload;
-      })
-
       .addCase(checkUserAuth.fulfilled, (state, action) => {
         state.isAuthChecked = true;
         if (action.payload) {
@@ -119,20 +67,20 @@ export const userSlice = createSlice({
         } else {
           state.user = null;
           state.isAuthenticated = false;
-          localStorage.removeItem('user');
         }
       })
-
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload;
       });
   }
 });
 
+export const { setUser, setIsAuthChecked } = userSlice.actions;
+
 export const selectIsAuthenticated = (state: RootState) =>
   state.user.isAuthenticated;
-
-export const { setUser, setIsAuthChecked } = userSlice.actions;
-export const { getIsAuthChecked, getUser } = userSlice.selectors;
+export const selectIsAuthChecked = (state: RootState) =>
+  state.user.isAuthChecked;
+export const getUser = (state: RootState) => state.user.user;
 
 export default userSlice.reducer;

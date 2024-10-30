@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
-import { getIsAuthChecked, getUser } from '../services/user/UserSlice';
+import { selectIsAuthChecked, getUser } from '../services/user/UserSlice';
 import { checkUserAuth } from '../services/user/UserActions';
 import { AppDispatch } from '../services/store';
 
@@ -15,7 +15,7 @@ const ProtectedRoute = ({
   children
 }: TProtectedRouteProps): React.JSX.Element => {
   const dispatch = useDispatch<AppDispatch>();
-  const isAuthChecked = useSelector(getIsAuthChecked);
+  const isAuthChecked = useSelector(selectIsAuthChecked);
   const user = useSelector(getUser);
   const location = useLocation();
 

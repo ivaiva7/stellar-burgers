@@ -21,7 +21,7 @@ import { useState, useEffect } from 'react';
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { useDispatch, useSelector } from '../../services/store';
 import { selectIsAuthenticated } from '../../services/user/UserSlice';
-import { checkUserAuth, logout } from '../../services/user/UserActions';
+import { checkUserAuth } from '../../services/user/UserActions';
 const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,13 +35,8 @@ const App = () => {
 
     if (refreshToken) {
       dispatch(checkUserAuth());
-    } else {
-      logout();
     }
-  }, [dispatch]);
-
-  const { number } = useParams<{ number: string }>();
-  const orderNumber = number ? parseInt(number, 10) : null;
+  }, [dispatch, isAuthenticated]);
 
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
 
@@ -58,15 +53,12 @@ const App = () => {
         <Route path='/feed' element={<Feed />} />
         <Route path='*' element={<NotFound404 />} />
 
-        <Route
-          path='/feed/:number'
-          element={<OrderInfo orderNumber={orderNumber} />}
-        />
+        <Route path='/feed/:number' element={<OrderInfo />} />
         <Route
           path='/profile/orders/:number'
           element={
             <OnlyAuth>
-              <OrderInfo orderNumber={orderNumber} />
+              <OrderInfo />
             </OnlyAuth>
           }
         />
@@ -137,14 +129,8 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal
-                title='Детали заказа'
-                onClose={() => {
-                  navigate(-2);
-                  setIsOrderModalOpen(false);
-                }}
-              >
-                <OrderInfo orderNumber={orderNumber} />
+              <Modal title='Детали заказа' onClose={handleCloseModal}>
+                <OrderInfo />
               </Modal>
             }
           />
@@ -152,14 +138,8 @@ const App = () => {
             path='/profile/orders/:number'
             element={
               <OnlyAuth>
-                <Modal
-                  title='Детали заказа'
-                  onClose={() => {
-                    navigate(-2);
-                    setIsOrderModalOpen(false);
-                  }}
-                >
-                  <OrderInfo orderNumber={orderNumber} />
+                <Modal title='Детали заказа' onClose={handleCloseModal}>
+                  <OrderInfo />
                 </Modal>
               </OnlyAuth>
             }
