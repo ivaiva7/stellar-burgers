@@ -22,6 +22,7 @@ import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { useDispatch, useSelector } from '../../services/store';
 import { selectIsAuthenticated } from '../../services/user/UserSlice';
 import { checkUserAuth } from '../../services/user/UserActions';
+import { fetchIngredients } from '../../slices/IngredientSlice';
 const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,11 +32,8 @@ const App = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
   useEffect(() => {
-    const refreshToken = localStorage.getItem('refreshToken');
-
-    if (refreshToken) {
-      dispatch(checkUserAuth());
-    }
+    dispatch(fetchIngredients());
+    dispatch(checkUserAuth());
   }, [dispatch, isAuthenticated]);
 
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -129,7 +127,7 @@ const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='Детали заказа' onClose={handleCloseModal}>
+              <Modal title='' onClose={handleCloseModal}>
                 <OrderInfo />
               </Modal>
             }
@@ -138,7 +136,7 @@ const App = () => {
             path='/profile/orders/:number'
             element={
               <OnlyAuth>
-                <Modal title='Детали заказа' onClose={handleCloseModal}>
+                <Modal title='' onClose={handleCloseModal}>
                   <OrderInfo />
                 </Modal>
               </OnlyAuth>

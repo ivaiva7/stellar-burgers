@@ -8,10 +8,13 @@ import styles from './order-info.module.css';
 
 import { OrderInfoUIProps } from './type';
 import { OrderStatus } from '@components';
+import { useLocation } from 'react-router-dom';
 
 export const OrderInfoUI: FC<OrderInfoUIProps> = memo(({ orderInfo }) => {
   console.log('OrderInfo:', orderInfo);
-  const { name, status, ingredientsInfo, date, total } = orderInfo;
+  const { number, name, status, ingredientsInfo, date, total } = orderInfo;
+  const location = useLocation();
+  const isModal = location.state && location.state.background;
 
   const modifiedIngredientsInfo = Object.values(ingredientsInfo).map((item) => {
     if (item.type === 'bun') {
@@ -21,7 +24,14 @@ export const OrderInfoUI: FC<OrderInfoUIProps> = memo(({ orderInfo }) => {
   });
 
   return (
-    <div className={styles.wrap}>
+    <div className={isModal ? styles.wrap : styles.wrap_page}>
+      <p>
+        <span
+          className={`text text_type_digits-default pr-4 ${styles.total} ${styles.number}`}
+        >
+          #{number}
+        </span>
+      </p>
       <h3 className={`text text_type_main-medium pb-3 pt-10 ${styles.header}`}>
         {name}
       </h3>

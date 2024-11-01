@@ -1,5 +1,5 @@
 import React, { FC, memo } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   CurrencyIcon,
   FormattedDate
@@ -12,20 +12,7 @@ import { OrderStatus } from '@components';
 
 export const OrderCardUI: FC<OrderCardUIProps> = memo(
   ({ orderInfo, maxIngredients, locationState }) => {
-    const navigate = useNavigate();
     const location = useLocation();
-
-    const handleClick = (event: React.MouseEvent) => {
-      event.preventDefault();
-
-      if (locationState && locationState.background) {
-        // Если находимся в состоянии фонового модального окна
-        navigate(`/feed/${orderInfo.number}`, { state: { background: true } });
-      } else {
-        // Открываем на отдельной странице
-        navigate(`/feed/${orderInfo.number}`, { state: { background: false } });
-      }
-    };
 
     return (
       <Link
@@ -33,7 +20,6 @@ export const OrderCardUI: FC<OrderCardUIProps> = memo(
         relative='path'
         state={locationState}
         className={`p-6 mb-4 mr-2 ${styles.order}`}
-        onClick={handleClick}
       >
         <div className={styles.order_info}>
           <span className={`text text_type_digits-default ${styles.number}`}>

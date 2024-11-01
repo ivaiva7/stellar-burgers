@@ -18,9 +18,7 @@ export const OrderInfo: FC<OrderInfoProps> = () => {
   const orderNumber = number ? Number(number) : null;
   const dispatch = useDispatch();
 
-  const { order, loading } = useSelector((state: RootState) =>
-    chooseOrder(state)
-  );
+  const { order, loading } = useSelector(chooseOrder);
 
   useEffect(() => {
     if (orderNumber != null) {

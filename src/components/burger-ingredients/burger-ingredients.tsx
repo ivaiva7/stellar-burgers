@@ -28,12 +28,6 @@ export const BurgerIngredients: FC = () => {
   const [saucesRef, inViewSauces] = useInView({ threshold: 0 });
 
   useEffect(() => {
-    if (ingredients.length === 0) {
-      dispatch(fetchIngredients());
-    }
-  }, [dispatch, ingredients.length]);
-
-  useEffect(() => {
     if (inViewBuns) setCurrentTab('bun');
     else if (inViewSauces) setCurrentTab('sauce');
     else if (inViewFilling) setCurrentTab('main');
