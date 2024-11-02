@@ -1,10 +1,4 @@
-import {
-  Route,
-  Routes,
-  useNavigate,
-  useLocation,
-  useParams
-} from 'react-router-dom';
+import { Route, Routes, useNavigate, useLocation } from 'react-router-dom';
 import { ConstructorPage, Feed, NotFound404 } from '@pages';
 import '../../index.css';
 import { OnlyAuth, OnlyUnAuth } from '../ProtectedRoute';
@@ -23,6 +17,7 @@ import { useDispatch, useSelector } from '../../services/store';
 import { selectIsAuthenticated } from '../../services/user/UserSlice';
 import { checkUserAuth } from '../../services/user/UserActions';
 import { fetchIngredients } from '../../slices/IngredientSlice';
+import { useMatch } from 'react-router-dom';
 const App = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,6 +25,10 @@ const App = () => {
 
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+
+  const profileMatch = useMatch('/profile/orders/:number')?.params.number;
+  const feedMatch = useMatch('/feed/:number')?.params.number;
+  const orderNumber = profileMatch || feedMatch;
 
   useEffect(() => {
     dispatch(fetchIngredients());
@@ -51,17 +50,46 @@ const App = () => {
         <Route path='/feed' element={<Feed />} />
         <Route path='*' element={<NotFound404 />} />
 
-        <Route path='/feed/:number' element={<OrderInfo />} />
+        <Route
+          path='/feed/:number'
+          element={
+            <div className={styles.detailPageWrap}>
+              <p
+                className={`text text_type_digits-default ${styles.detailHeader}`}
+              >
+                #{orderNumber && orderNumber.padStart(6, '0')}
+              </p>
+              <OrderInfo />
+            </div>
+          }
+        />
         <Route
           path='/profile/orders/:number'
           element={
             <OnlyAuth>
-              <OrderInfo />
+              <div className={styles.detailPageWrap}>
+                <p
+                  className={`text text_type_digits-default ${styles.detailHeader}`}
+                >
+                  #{orderNumber && orderNumber.padStart(6, '0')}
+                </p>
+                <OrderInfo />
+              </div>
             </OnlyAuth>
           }
         />
 
-        <Route path='/ingredients/:id' element={<IngredientDetails />} />
+        <Route
+          path='/ingredients/:id'
+          element={
+            <div className={styles.detailPageWrap}>
+              <p className={`text text_type_main_large ${styles.detailHeader}`}>
+                Детали ингредиента
+              </p>
+              <IngredientDetails />
+            </div>
+          }
+        />
 
         <Route
           path='/login'
@@ -128,6 +156,9 @@ const App = () => {
             path='/feed/:number'
             element={
               <Modal title='' onClose={handleCloseModal}>
+                <p className={`text text_type_digits-default`}>
+                  #{orderNumber && orderNumber.padStart(6, '0')}
+                </p>
                 <OrderInfo />
               </Modal>
             }
@@ -137,6 +168,9 @@ const App = () => {
             element={
               <OnlyAuth>
                 <Modal title='' onClose={handleCloseModal}>
+                  <p className={`text text_type_digits-default`}>
+                    #{orderNumber && orderNumber.padStart(6, '0')}
+                  </p>
                   <OrderInfo />
                 </Modal>
               </OnlyAuth>

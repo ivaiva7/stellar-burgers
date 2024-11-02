@@ -75,12 +75,10 @@ const orderSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchOrderByNumber.pending, (state) => {
-        console.log('Получаю заказы...');
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchOrderByNumber.fulfilled, (state, action) => {
-        console.log('Заказы получены:', action.payload.order);
         state.order = action.payload.order;
         state.ingredients = action.payload.ingredients;
         state.loading = false;
