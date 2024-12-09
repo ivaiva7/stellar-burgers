@@ -8,12 +8,16 @@ export const ModalUI = memo(
   forwardRef<HTMLDivElement, TModalUIProps>(
     ({ title, onClose, children }, ref) => (
       <>
-        <div className={styles.modal} ref={ref}>
+        <div className={styles.modal} ref={ref} data-testid='modal'>
           <div className={styles.header}>
             <h3 className={`${styles.title} text text_type_main-large`}>
               {title}
             </h3>
-            <button className={styles.button} type='button'>
+            <button
+              className={styles.button}
+              type='button'
+              data-testid='modal-close'
+            >
               <CloseIcon type='primary' onClick={onClose} />
             </button>
           </div>
