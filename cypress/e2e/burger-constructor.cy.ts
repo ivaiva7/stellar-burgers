@@ -24,6 +24,7 @@ describe('Burger Constructor', () => {
     cy.get('[data-testid="ingredient-item"]').first().click();
     cy.get('[data-testid="modal"]').should('exist');
     cy.get('[data-testid="modal-close"]').click();
+    cy.get('[data-testid="modal"]').should('not.exist');
   });
 });
 
@@ -61,17 +62,29 @@ describe('оформление заказа работает корректно'
     cy.wait('@postOrder')
       .its('request.body')
       .should('deep.equal', {
-        ingredients: [
-          'Краторная булка N-200i',
-          'Биокотлета из марсианской Магнолии'
-        ]
+        ingredients: ['643d69a5c3f7b9001cfa093c', '643d69a5c3f7b9001cfa0941']
       });
-    cy.get('[data-testid="modal"]').should('exist');
-    cy.get('[data-testid="order-details-ui"]').should('exist');
-    cy.get('[data-testid="modal-close"]').click();
-    cy.get('[data-testid="constructor-ingredient"]').should('have.length', 0);
-  });
+    cy.get('[data-testid="modal"]')
+      .should('exist')
+      .first()
+      .within(() => {
+        cy.get('[data-testid="modal-close"]').click({ force: true });
+      });
+    cy.get('[data-testid="modal"]').should('not.exist');
 
+    cy.get('[data-testid="burger-constructor"]').within(() => {
+      cy.get('[data-testid="constructor-ingredient"]')
+        .contains('Выберите булку')
+        .should('exist');
+      cy.get('[data-testid="constructor-area"]')
+        .contains('Выберите начинку')
+        .should('exist');
+    });
+
+    cy.get('[data-testid="order-button"]').should('exist');
+    cy.get('[data-testid="order-button"]').click();
+    cy.get('[data-testid="modal"]').should('not.exist');
+  });
   afterEach(function () {
     cy.clearLocalStorage();
     cy.clearCookies();

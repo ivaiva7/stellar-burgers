@@ -17,13 +17,27 @@ type TUserState = {
   isAuthenticated: boolean;
 };
 
-const initialState: TUserState = {
-  user: JSON.parse(localStorage.getItem('user') || 'null'),
-  isAuthChecked: false,
-  isLoading: false,
-  error: null,
-  isAuthenticated: !!localStorage.getItem('refreshToken')
-};
+function getInitialState(): TUserState {
+  const user =
+    typeof window !== 'undefined' && window.localStorage
+      ? JSON.parse(localStorage.getItem('user') || 'null')
+      : null;
+
+  const isAuthenticated =
+    typeof window !== 'undefined' && window.localStorage
+      ? !!localStorage.getItem('refreshToken')
+      : false;
+
+  return {
+    user,
+    isAuthChecked: false,
+    isLoading: false,
+    error: null,
+    isAuthenticated
+  };
+}
+
+const initialState: TUserState = getInitialState();
 
 export const userSlice = createSlice({
   name: 'user',
@@ -31,6 +45,7 @@ export const userSlice = createSlice({
   reducers: {
     setUser(state, action: PayloadAction<TUser | null>) {
       state.user = action.payload;
+      state.isAuthenticated = !!action.payload;
       if (action.payload) {
         localStorage.setItem('user', JSON.stringify(action.payload));
       } else {

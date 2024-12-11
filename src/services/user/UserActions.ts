@@ -8,7 +8,9 @@ import {
   updateUserApi,
   fetchWithRefresh,
   TRegisterData,
-  TLoginData
+  TLoginData,
+  getUserApi,
+  TUserResponse
 } from '@api';
 import { TUser } from '@utils-types';
 import { setCookie, deleteCookie, getCookie } from '../../utils/cookie';
@@ -63,20 +65,14 @@ export const resetPassword = createAsyncThunk<
 export const getUser = async (dispatch: any): Promise<TUser | null> => {
   const refreshToken = getCookie('refreshToken');
 
-  if (!refreshToken) {
-    return null;
-  }
-
-  const dataUser: TUser | null = await fetchWithRefresh('auth/user', {
-    headers: { authorization: `Bearer ${refreshToken}` }
-  });
+  const dataUser: TUserResponse = await getUserApi();
 
   if (!dataUser) {
     dispatch(logout());
     return null;
   }
 
-  return dataUser;
+  return dataUser.user;
 };
 
 export const checkUserAuth = createAsyncThunk<TUser | null, void>(
