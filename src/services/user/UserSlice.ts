@@ -73,6 +73,7 @@ export const userSlice = createSlice({
       .addCase(logout.fulfilled, (state) => {
         state.user = null;
         state.isAuthenticated = false;
+        localStorage.removeItem('user');
       })
       .addCase(checkUserAuth.fulfilled, (state, action) => {
         state.isAuthChecked = true;
