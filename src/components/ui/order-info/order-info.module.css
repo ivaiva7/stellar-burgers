@@ -2,8 +2,15 @@
   margin: 0 auto;
   width: 640px;
 }
+
+.wrap_page {
+    margin: auto;
+    width: 640px;
+}
+
 .number {
-  text-align: center;
+    display: flex;
+    justify-content: center;
 }
 
 .status {

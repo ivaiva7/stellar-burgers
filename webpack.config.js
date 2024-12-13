@@ -83,12 +83,18 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: 'bundle.js'
+    filename: 'bundle.js',
+    publicPath: '/'
   },
   devServer: {
     static: path.join(__dirname, './dist'),
     compress: true,
-    historyApiFallback: true,
+    historyApiFallback: {
+      rewrites: [
+        { from: /^\/feed\/.*$/, to: '/index.html' }, // Все маршруты /feed/ направлять на index.html
+        { from: /./, to: '/index.html' } // Остальные маршруты тоже на index.html
+      ]
+    },
     port: 4000
   }
 };
